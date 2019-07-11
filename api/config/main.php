@@ -19,10 +19,12 @@ return [
     ],
     'components' => [
         'request' => [
+            'enableCookieValidation' => false,
+            'enableCsrfValidation' => false,
             'parsers' => [
                 'application/json' => 'yii\web\JsonParser',
                 ],
-            'csrfParam' => '_csrf-backend',
+//            'csrfParam' => '_csrf-backend',
         ],
         'response' => [
             'format' => yii\web\Response::FORMAT_JSON,
@@ -61,6 +63,12 @@ return [
                     'pluralize' => false,
                     'class' => 'yii\rest\UrlRule',
                     'controller' => ['v1/country', 'v1/appone', 'v1/apptwo'], // our api rule,
+                    'extraPatterns' => [
+                        'OPTIONS <action:\w+>' => 'options',
+                        'POST create' => 'create', 
+                        'POST login' => 'login', 
+                        'POST hello' => 'hello', 
+                        ],
                     'tokens' => [
                     '{id}' => '<id:\\w+>'
                     ],
