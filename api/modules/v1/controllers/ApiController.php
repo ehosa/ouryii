@@ -7,6 +7,7 @@ use yii\filters\Cors;
 use yii\rest\ActiveController;
 use yii\filters\auth\HttpBasicAuth;
 use yii\filters\ContentNegotiator;
+use yii\filters\auth\HttpBearerAuth;
 use yii\web\Response;
 
 /**
@@ -33,6 +34,7 @@ class ApiController extends ActiveController {
     public function behaviors() {
         $behaviors = parent::behaviors();
 
+
         // remove authentication filter
         $auth = $behaviors['authenticator'];
         unset($behaviors['authenticator']);
@@ -46,10 +48,10 @@ class ApiController extends ActiveController {
         $behaviors['authenticator'] = $auth;
 
 
-//        $behaviors['authenticator'] = [
-//            'class' => HttpBasicAuth::className(),
-//            'only' => ['hello'],
-//        ];
+        $behaviors['authenticator'] = [
+            'class' => HttpBearerAuth::className(),
+            'only' => ['hello'],
+        ];
 
         // avoid authentication on CORS-pre-flight requests (HTTP OPTIONS method)
         $behaviors['authenticator']['except'] = ['options'];

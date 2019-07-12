@@ -4,13 +4,13 @@ namespace frontend\models;
 
 use Yii;
 use yii\base\Model;
-use common\models\User;
-use api\modules\v1\models\Appone;
+//use common\models\User;
+use api\modules\v1\models\Apptwo;
 
 /**
  * Signup form
  */
-class SignupForm extends Model {
+class SignupFormTwo extends Model {
 
     public $username;
     public $email;
@@ -25,14 +25,14 @@ class SignupForm extends Model {
             ['username', 'trim'],
             ['username', 'required'],
 //            ['username', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This username has already been taken.'],
-            ['username', 'unique', 'targetClass' => '\api\modules\v1\models\Appone', 'message' => 'This username has already been taken.'],
+            ['username', 'unique', 'targetClass' => '\api\modules\v1\models\Apptwo', 'message' => 'This username has already been taken.'],
             ['username', 'string', 'min' => 2, 'max' => 255],
             ['email', 'trim'],
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
 //            ['email', 'unique', 'targetClass' => '\common\models\User', 'message' => 'This email address has already been taken.'],
-            ['email', 'unique', 'targetClass' => '\api\modules\v1\models\Appone', 'message' => 'This email address has already been taken.'],
+            ['email', 'unique', 'targetClass' => '\api\modules\v1\models\Apptwo', 'message' => 'This email address has already been taken.'],
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
         ];
@@ -49,36 +49,22 @@ class SignupForm extends Model {
         }
 
 //        $user = new User();
-        $user = new \api\modules\v1\models\Appone();
+        $user = new \api\modules\v1\models\Apptwo();
         $user->username = $this->username;
         $user->email = $this->email;
         $user->phone = $this->phone;
         $user->setPassword($this->password);
         $user->generateAccessToken();
-        $user->generateAuthKey();
+//        $user->generateAuthKey();
 //        $user->generateEmailVerificationToken();
 //        return $user->save() && $this->sendEmail($user);
-
-        if ($user->save()) {
-            
-//            $id = \Yii::$app->db->getLastInsertID();
-            $user1 = new User();
-            $user1->fk_appone_id = $user->id;
-            $user1->auth_key = $user->auth_key;
-            $user1->username = $this->username;
-            $user1->email = $this->email;
-            $user1->phone = $this->phone;
-            $user1->password_hash = $user->password_hash;
-//            $user1->generateAuthKey();
-            $user1->generateEmailVerificationToken();
-            
-            $user1->save();
-
-        }
-        
-            return $user;
-//        return $user->save() && $user1->save();
-//        return $user->save() && $this->sendEmail($user);
+        $user->save();
+        // Let's update the users table to add the apptwo_id field
+        Yii::$app->db->createCommand("UPDATE user SET fk_apptwo_id=:fk_apptwo_id WHERE email=:email")
+                ->bindValue(':email', $user->email)
+                ->bindValue(':fk_apptwo_id', $user->id)
+                ->execute();
+        return $user;
     }
 
     /**

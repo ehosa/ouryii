@@ -5,7 +5,7 @@ namespace api\modules\v1\controllers;
 use Yii;
 use api\modules\v1\controllers\ApiController;
 
-//use api\modules\v1\models\Appone;
+use api\modules\v1\models\Appone;
 
 /**
  * 	Appone Controller
@@ -69,13 +69,12 @@ class ApponeController extends ApiController {
     }
 
     public function actionHello() {
-         $response = [
-        'username' => Yii::$app->user->identity->username,
-        'access_token' => Yii::$app->user->identity->getAuthKey()
-    ];
-    return $response;
+//        Yii::$app->user->identityClass = '\api\modules\v1\models\Appone';
+        $response = [
+            'username' => Yii::$app->user->identity->username,
+            'access_token' => Yii::$app->user->identity->getAuthKey()
+        ];
+        return $response;
     }
-    
-    
 
 }
